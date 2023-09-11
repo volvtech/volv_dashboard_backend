@@ -15,8 +15,13 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+
+from volv_dashboard_backend.volv_dashboard.views import ArticlesListView, ArticleView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api-auth/', include('rest_framework.urls')),
+    path('articles/', ArticlesListView.as_view(), name='Get list of articles'),
+    path('article/<int:article_id>', ArticleView.as_view(), name='Get an Article Detail'),
 ]
