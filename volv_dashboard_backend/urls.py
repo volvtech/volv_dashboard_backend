@@ -16,12 +16,24 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+# from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token
+# from volv_dashboard_backend.volv_dashboard import views
 
-from volv_dashboard_backend.volv_dashboard.views import ArticlesListView, ArticleView
+from volv_dashboard_backend.volv_dashboard.views import ArticlesListView, ArticleView, ArticleCreateView, UserLoginView, \
+    ArticlesFiltersView
+
+# from rest_framework.routers import DefaultRouter
+# router = DefaultRouter()
+# router.register(r'model', views.ArticleCreateView)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    # path(r'^api-token-auth/', obtain_jwt_token),
+    # path(r'^api-token-refresh/', refresh_jwt_token),
+    path('user/login/', UserLoginView.as_view(), name='user-login'),
     path('api-auth/', include('rest_framework.urls')),
-    path('articles/', ArticlesListView.as_view(), name='Get list of articles'),
+    path('articles/<int:page_id>', ArticlesListView.as_view(), name='Get list of articles'),
+    path('articles_filters/', ArticlesFiltersView.as_view(), name='Get list of filter options'),
     path('article/<int:article_id>', ArticleView.as_view(), name='Get an Article Detail'),
+    path('articles/create/', ArticleCreateView.as_view(), name='Create an Article'),
 ]
