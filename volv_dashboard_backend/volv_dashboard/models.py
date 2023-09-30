@@ -772,7 +772,7 @@ class SubscriptionPromoCodes(models.Model):
 
 
 class Subscriptions(models.Model):
-    uid = models.PositiveBigIntegerField(unique=True, blank=True, null=True)
+    uid = models.BigIntegerField(unique=True, blank=True, null=True)
     pricing = models.ForeignKey(SubscriptionPricing, models.DO_NOTHING, blank=True, null=True)
     start_date = models.DateTimeField(blank=True, null=True)
     end_date = models.DateTimeField(blank=True, null=True)
