@@ -24,8 +24,23 @@ class ArticlesListView(APIView):
 
     def get_filtered_articles(self, request_data):
         """This function will filter and send articles"""
-        conditions = reduce(operator.and_, [Q(**{filter_item:request_data[filter_item]}) for filter_item in request_data])
-        # all_articles = (Articles.objects.filter(conditions).order_by('-updated_at'))
+        LOGGER.info(f"#volv_dashboard #views #ArticlesListView #get_filtered_articles request_data====> {request_data}")
+
+        search_term = request_data.get('search_term', "")
+        LOGGER.info(f"#volv_dashboard #views #ArticlesListView #get_filtered_articles search_term====> {search_term}")
+        search_term_condition = []
+        if search_term:
+            request_data.pop("search_term")
+            search_term_condition = [Q(article_author__contains=search_term) |
+                        Q(article_heading__contains=search_term) |
+                        Q(article_summary__contains=search_term) |
+                        Q(article_status__contains=search_term) |
+                        Q(article_category__contains=search_term)]
+
+        all_conditions = ([Q(**{filter_item:request_data[filter_item]}) for filter_item in request_data] +
+                          search_term_condition)
+        conditions = reduce(operator.and_, all_conditions)
+        LOGGER.info(f"#volv_dashboard #views #ArticlesListView #get_filtered_articles conditions====> {conditions}")
         all_articles = (Articles.objects.filter(conditions).order_by('-updated_at'))
         return all_articles
 
