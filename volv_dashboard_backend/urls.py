@@ -37,3 +37,7 @@ urlpatterns = [
     path('article/<int:article_id>', ArticleView.as_view(), name='Get an Article Detail'),
     path('articles/create/', ArticleCreateView.as_view(), name='Create an Article'),
 ]
+
+admin.site.site_header = "Volv Admin"
+admin.site.site_title = "Volv Admin Portal"
+admin.site.index_title = "Welcome to Volv Portal"
