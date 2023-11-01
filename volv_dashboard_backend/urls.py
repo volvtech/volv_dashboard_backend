@@ -35,7 +35,7 @@ urlpatterns = [
     path('articles/<int:page_id>', ArticlesListView.as_view(), name='Get list of articles'),
     path('articles_filters/', ArticlesFiltersView.as_view(), name='Get list of filter options'),
     path('article/<int:article_id>', ArticleView.as_view(), name='Get an Article Detail'),
-    path('articles/create/', ArticleCreateView.as_view(), name='Create an Article'),
+    path('publishers/', PublisherView.as_view(), name='List of Publishers'),
 ]
 
 admin.site.site_header = "Volv Admin"

@@ -159,3 +159,24 @@ class ArticlesFiltersView(APIView):
             LOGGER.error(f"#volv_dashboard_backend #volv_dashboard #views #ArticlesFiltersView #GET #ERROR: "
                          f"{str(err)}", exc_info=True)
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class PublisherView(APIView):
+    # permission_classes = [StaffPermission | HasAPIKey]
+    permission_classes = []
+
+    def get(self, request):
+        try:
+            LOGGER.info(f"#volv_dashboard_backend #volv_dashboard #views #PublisherView #GET starts...")
+            publishers = Publishers.objects.all().values_list('id', 'publisher_title')
+            publishers_data = []
+            for publisher in publishers:
+                # publishers_data.append({"publisher_id": publisher[0], "publisher_title": publisher[1]})
+                publishers_data.append({"publisher_id": 1, "publisher_title": 'DIpak'})
+
+            LOGGER.info(f"#volv_dashboard_backend #volv_dashboard #views #PublisherView publishers: "
+                        f"{publishers}")
+            return Response(status=200, data={'data': publishers_data})
+        except Exception as err:
+            LOGGER.error(f"#volv_dashboard_backend #volv_dashboard #views #PublisherView #GET #ERROR: "
+                         f"{str(err)}", exc_info=True)
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
