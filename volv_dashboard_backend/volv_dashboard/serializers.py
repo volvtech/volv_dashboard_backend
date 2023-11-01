@@ -14,8 +14,8 @@ class ArticlesListSerializer(serializers.ModelSerializer):
 class ArticleDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Articles
-        # fields = '__all__'
-        fields = ['article_heading', 'article_summary']
+        fields = '__all__'
+        # fields = ['article_heading', 'article_summary']
 
 
 class UserLoginSerializer(serializers.Serializer):

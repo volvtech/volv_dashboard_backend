@@ -20,7 +20,7 @@ from django.urls import path, include
 # from volv_dashboard_backend.volv_dashboard import views
 
 from volv_dashboard_backend.volv_dashboard.views import ArticlesListView, ArticleView, ArticleCreateView, UserLoginView, \
-    ArticlesFiltersView
+    ArticlesFiltersView, PublisherView
 
 # from rest_framework.routers import DefaultRouter
 # router = DefaultRouter()
@@ -36,6 +36,7 @@ urlpatterns = [
     path('articles_filters/', ArticlesFiltersView.as_view(), name='Get list of filter options'),
     path('article/<int:article_id>', ArticleView.as_view(), name='Get an Article Detail'),
     path('articles/create/', ArticleCreateView.as_view(), name='Create an Article'),
+    path('publishers/', PublisherView.as_view(), name='List of Publishers'),
 ]
 
 admin.site.site_header = "Volv Admin"
