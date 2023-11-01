@@ -171,7 +171,8 @@ class PublisherView(APIView):
             publishers = Publishers.objects.all().values_list('id', 'publisher_title')
             publishers_data = []
             for publisher in publishers:
-                publishers_data.append({"publisher_id": publisher[0], "publisher_title": publisher[1]})
+                # publishers_data.append({"publisher_id": publisher[0], "publisher_title": publisher[1]})
+                publishers_data.append({"publisher_id": 1, "publisher_title": 'DIpak'})
 
             LOGGER.info(f"#volv_dashboard_backend #volv_dashboard #views #PublisherView publishers: "
                         f"{publishers}")
