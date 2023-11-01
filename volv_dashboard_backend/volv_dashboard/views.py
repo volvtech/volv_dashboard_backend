@@ -160,7 +160,6 @@ class ArticlesFiltersView(APIView):
                          f"{str(err)}", exc_info=True)
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
 class PublisherView(APIView):
     # permission_classes = [StaffPermission | HasAPIKey]
     permission_classes = []
