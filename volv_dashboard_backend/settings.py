@@ -78,27 +78,27 @@ WSGI_APPLICATION = 'volv_dashboard_backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'volv',
-        'USER': 'root',
-        'PASSWORD': 'Code@Rathod%123',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
-    }
-}
-
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'volv_stage',
+#         'NAME': 'volv',
 #         'USER': 'root',
-#         'PASSWORD': 'alternation',
-#         'HOST': 'aaeqzztbdowenn.cs8idmhe7yye.us-east-2.rds.amazonaws.com',
+#         'PASSWORD': 'Code@Rathod%123',
+#         'HOST': '127.0.0.1',
 #         'PORT': '3306',
 #     }
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'volv_stage',
+        'USER': 'root',
+        'PASSWORD': 'alternation',
+        'HOST': 'aaeqzztbdowenn.cs8idmhe7yye.us-east-2.rds.amazonaws.com',
+        'PORT': '3306',
+    }
+}
 
 
 # Password validation
