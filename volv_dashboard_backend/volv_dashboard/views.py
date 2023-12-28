@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from rest_framework_jwt.settings import api_settings
 from django.db.models import Q
 
-from volv_dashboard_backend.volv_dashboard.models import Articles, Publishers, Authors, Users, ArticleStatuses, ArticleCategories
+from volv_dashboard_backend.volv_dashboard.models import Articles, Publishers, Authors, Users, ArticleStatuses, ArticleCategories, ArticleHashtags
 from volv_dashboard_backend.volv_dashboard.permissions import StaffPermission, HasAPIKey
 from volv_dashboard_backend.volv_dashboard.serializers import ArticlesListSerializer, ArticleDetailSerializer, \
     UserLoginSerializer
@@ -14,6 +14,14 @@ import operator
 from functools import reduce
 
 from volv_dashboard_backend.log_conf import Logger
+
+from django.urls import reverse_lazy
+from django.contrib.auth.views import PasswordResetView
+from django.contrib.messages.views import SuccessMessageMixin
+
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import get_template
+from django.template import Context
 
 LOGGER = Logger.get_logger(__name__)
 
@@ -120,7 +128,7 @@ class UserLoginView(APIView):
         print(f"valid: {user_serializer.is_valid()}")
         if user_serializer.is_valid():
             user = user_serializer.validated_data
-
+            print(f"user: {user}")
             jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
             jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 
@@ -179,4 +187,50 @@ class PublisherView(APIView):
         except Exception as err:
             LOGGER.error(f"#volv_dashboard_backend #volv_dashboard #views #PublisherView #GET #ERROR: "
                          f"{str(err)}", exc_info=True)
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+class PasswordResetView(APIView):
+    def get(self, request):
+        try:
+            LOGGER.info(f"#views #PasswordResetView #POST starts...")
+            print(f"#views #PasswordResetView #POST data: {request.data}")
+            password_reset_serializer = PasswordResetSerializer(data=request.data)
+            print(f"#views #PasswordResetView #POST valid: {user_serializer.is_valid()}")
+            if password_reset_serializer.is_valid():
+                print(f"#views #PasswordResetView #POST Email is valid")
+
+                plaintext = get_template('email.txt')
+                htmly     = get_template('email.html')
+
+                d = Context({ 'username': username })
+
+                subject, from_email, to = 'hello', 'from@example.com', 'to@example.com'
+                text_content = plaintext.render(d)
+                html_content = htmly.render(d)
+                msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
+                msg.attach_alternative(html_content, "text/html")
+                msg.send()
+
+                return Response(status=status.HTTP_200_OK)
+            else:
+                return Response({'error': password_reset_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as err:
+            LOGGER.error(f"#views #PasswordResetView #POST #ERROR: {str(err)}")
+
+
+class HashtagsView(APIView):
+    permission_classes = [StaffPermission | HasAPIKey]
+    def get(self, request):
+        try:
+            LOGGER.info("#volv_dashboard_backend #volv_dashboard #views #HashtagsView GET Starts...")
+            article_hashtags = ArticleHashtags.objects.all().values_list('id', 'category_ids', 'sub_category')
+            LOGGER.info(f"#volv_dashboard_backend #volv_dashboard #views #HashtagsView article_hashtags: "
+                            f"{article_hashtags}")
+            return Response(status=status.HTTP_200_OK, data={'article_hashtags': article_hashtags})
+        except Exception as err:
+            LOGGER.error(f"#volv_dashboard_backend #volv_dashboard #views #HashtagsView GET #ERROR: {str(err)}",
+                          exc_info=True)
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)

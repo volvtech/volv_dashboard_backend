@@ -19,8 +19,15 @@ from django.urls import path, include
 # from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token
 # from volv_dashboard_backend.volv_dashboard import views
 
-from volv_dashboard_backend.volv_dashboard.views import ArticlesListView, ArticleView, ArticleCreateView, UserLoginView, \
-    ArticlesFiltersView, PublisherView
+from volv_dashboard_backend.volv_dashboard.views import ArticlesListView, ArticleView, ArticleCreateView, UserLoginView, ArticlesFiltersView, PublisherView, HashtagsView
+
+from django.contrib.auth.views import (
+    LogoutView, 
+    PasswordResetView, 
+    PasswordResetDoneView, 
+    PasswordResetConfirmView,
+    PasswordResetCompleteView
+)
 
 # from rest_framework.routers import DefaultRouter
 # router = DefaultRouter()
@@ -37,6 +44,8 @@ urlpatterns = [
     path('article/<int:article_id>', ArticleView.as_view(), name='Get an Article Detail'),
     path('articles/create/', ArticleCreateView.as_view(), name='Create an Article'),
     path('publishers/', PublisherView.as_view(), name='List of Publishers'),
+    path('password_reset/', PasswordResetView.as_view(), name='User Password Reset'),
+    path('get_hashtags/', HashtagsView.as_view(), name='List of Hashtags'),
 ]
 
 admin.site.site_header = "Volv Admin"

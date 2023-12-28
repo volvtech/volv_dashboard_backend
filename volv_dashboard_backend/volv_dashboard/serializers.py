@@ -34,3 +34,19 @@ class UserLoginSerializer(serializers.Serializer):
         if not user.is_active:
             raise serializers.ValidationError('User account is disabled')
         return user
+
+
+class PasswordResetSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+    class Meta:
+        model = Users
+    def validate(self, data):
+        email = data.get('email')
+        user = User.objects.filter(email=email).exists()
+        if not user:
+            raise serializers.ValidationError('Invalid email')
+
+        if not user.is_active:
+            raise serializers.ValidationError('User account is disabled')
+        return user
