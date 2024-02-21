@@ -6,8 +6,7 @@ from volv_dashboard_backend.volv_dashboard.models import Users
 class ArticlesListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Articles
-        fields = ['id', 'article_heading', 'article_summary', 'article_author', 'article_category',
-                  'article_image', 'created_at', 'article_status']
+        fields = __all__
         many = True
 
 

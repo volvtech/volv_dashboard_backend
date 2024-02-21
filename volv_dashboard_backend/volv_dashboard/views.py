@@ -136,7 +136,7 @@ class UserLoginView(APIView):
             payload = jwt_payload_handler(user)
             token = jwt_encode_handler(payload)
 
-            return Response({'token': token}, status=status.HTTP_200_OK)
+            return Response({'token': token, "user": user}, status=status.HTTP_200_OK)
         else:
             return Response({'error': user_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
