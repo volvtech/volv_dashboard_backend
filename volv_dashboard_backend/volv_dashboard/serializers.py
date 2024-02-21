@@ -20,7 +20,8 @@ class ArticleDetailSerializer(serializers.ModelSerializer):
 class UserLoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField()
-
+    user_data = serializers.SerializerMethodField()
+    
     class Meta:
         model = Users
     def validate(self, data):
@@ -34,6 +35,18 @@ class UserLoginSerializer(serializers.Serializer):
             raise serializers.ValidationError('User account is disabled')
         return user
 
+    def get_user_data(self, request):
+        user = Users.objects.get(id=3)
+        user_data_obj = {}
+        user_data_obj['name'] = user.name
+        user_data_obj['email'] = user.email
+        user_data_obj['id'] = user.id
+        user_data_obj['password'] = user.password
+        user_data_obj['remember_token'] = user.remember_token
+        user_data_obj['created_at'] = user.created_at
+        user_data_obj['updated_at'] = user.updated_at
+        user_data_obj['role'] = user.role
+        return user_data_obj
 
 class PasswordResetSerializer(serializers.Serializer):
     email = serializers.EmailField()
