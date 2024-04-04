@@ -33,7 +33,11 @@ from django.contrib.auth.views import (
 # router = DefaultRouter()
 # router.register(r'model', views.ArticleCreateView)
 
+def trigger_error(request):
+    division_by_zero = 1 / 0
+
 urlpatterns = [
+    # path('sentry-debug/', trigger_error),
     path('admin/', admin.site.urls),
     # path(r'^api-token-auth/', obtain_jwt_token),
     # path(r'^api-token-refresh/', refresh_jwt_token),
@@ -46,8 +50,9 @@ urlpatterns = [
     path('publishers/', PublisherView.as_view(), name='List of Publishers'),
     path('password_reset/', PasswordResetView.as_view(), name='User Password Reset'),
     path('get_hashtags/', HashtagsView.as_view(), name='List of Hashtags'),
+    path('get_hashtags/', HashtagsView.as_view(), name='List of Hashtags'),
 ]
-
+ 
 admin.site.site_header = "Volv Admin"
 admin.site.site_title = "Volv Admin Portal"
 admin.site.index_title = "Welcome to Volv Portal"

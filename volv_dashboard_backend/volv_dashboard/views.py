@@ -60,7 +60,7 @@ class ArticlesListView(APIView):
             paginated_articles = Paginator(all_articles, per_page=10)
             articles = paginated_articles.get_page(page_id)
             articles_serializer = ArticlesListSerializer(articles, many=True)
-            return JsonResponse({'data': articles_serializer.data, 'total_pages': paginated_articles.num_pages})
+            return JsonResponsgite({'data': articles_serializer.data, 'total_pages': paginated_articles.num_pages})
         except Exception as err:
             LOGGER.error(f"#volv_dashboard_backend #volv_dashboard #views GET #ERROR: {str(err)}", exc_info=True)
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -99,7 +99,7 @@ class ArticleView(APIView):
 
 
 class ArticleCreateView(APIView):
-    permission_classes = [StaffPermission | HasAPIKey]
+    permission_classes = ()
 
     def post(self, request):
         try:
@@ -112,7 +112,7 @@ class ArticleCreateView(APIView):
                 article_serializer.save()
                 return Response(article_serializer.data, status.HTTP_201_CREATED)
             else:
-                return Response({'error': "Serializer is invalid"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'error': article_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as err:
             LOGGER.error(f"#volv_dashboard_backend #volv_dashboard #views #ArticleCreateView GET #ERROR: "
                           f"{str(err)}", exc_info=True)
@@ -128,7 +128,10 @@ class UserLoginView(APIView):
         print(f"valid: {user_serializer.is_valid()}")
         if user_serializer.is_valid():
             user = user_serializer.validated_data
-            print(f"user: {user}")
+            # print(f"user_email: {user.id}")
+            data = user_serializer.data
+            # data = Users.objects.get(id=user.id)
+            # print(f"data: {data}")
             jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
             jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 
@@ -136,7 +139,7 @@ class UserLoginView(APIView):
             payload = jwt_payload_handler(user)
             token = jwt_encode_handler(payload)
 
-            return Response({'token': token, "user": user}, status=status.HTTP_200_OK)
+            return Response({'token': token, "data": data}, status=status.HTTP_200_OK)
         else:
             return Response({'error': user_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
