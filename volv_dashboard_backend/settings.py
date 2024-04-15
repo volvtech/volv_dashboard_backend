@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
+import sentry_sdk
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -78,27 +80,27 @@ WSGI_APPLICATION = 'volv_dashboard_backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'volv',
-#         'USER': 'root',
-#         'PASSWORD': 'Code@Rathod%123',
-#         'HOST': '127.0.0.1',
-#         'PORT': '3306',
-#     }
-# }
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'volv_stage',
+        'NAME': 'volv',
         'USER': 'root',
-        'PASSWORD': 'alternation',
-        'HOST': 'aaeqzztbdowenn.cs8idmhe7yye.us-east-2.rds.amazonaws.com',
+        'PASSWORD': 'Code@Rathod%123',
+        'HOST': '127.0.0.1',
         'PORT': '3306',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'volv_stage',
+#         'USER': 'root',
+#         'PASSWORD': 'alternation',
+#         'HOST': 'aaeqzztbdowenn.cs8idmhe7yye.us-east-2.rds.amazonaws.com',
+#         'PORT': '3306',
+#     }
+# }
 
 
 # Password validation
@@ -168,3 +170,20 @@ STATIC_URL = '/static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR,'static')
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = str(os.getenv('EMAIL_USER'))
+EMAIL_HOST_PASSWORD = str(os.getenv('EMAIL_PASSWORD'))
+
+# sentry_sdk.init(
+#     dsn="https://1d9f4fe9e5f27f2b0c9093ea6d75df28@o4506954548641792.ingest.us.sentry.io/4506954552639488",
+#     # Set traces_sample_rate to 1.0 to capture 100%
+#     # of transactions for performance monitoring.
+#     traces_sample_rate=1.0,
+#     # Set profiles_sample_rate to 1.0 to profile 100%
+#     # of sampled transactions.
+#     # We recommend adjusting this value in production.
+#     profiles_sample_rate=1.0,
+# )
