@@ -60,7 +60,7 @@ class ArticlesListView(APIView):
             paginated_articles = Paginator(all_articles, per_page=10)
             articles = paginated_articles.get_page(page_id)
             articles_serializer = ArticlesListSerializer(articles, many=True)
-            return JsonResponsgite({'data': articles_serializer.data, 'total_pages': paginated_articles.num_pages})
+            return JsonResponse({'data': articles_serializer.data, 'total_pages': paginated_articles.num_pages})
         except Exception as err:
             LOGGER.error(f"#volv_dashboard_backend #volv_dashboard #views GET #ERROR: {str(err)}", exc_info=True)
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
