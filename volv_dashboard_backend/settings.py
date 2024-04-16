@@ -83,7 +83,7 @@ WSGI_APPLICATION = 'volv_dashboard_backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'volv',
+        'NAME': 'volv_stage',
         'USER': 'root',
         'PASSWORD': 'alternation',
         'HOST': 'aaeqzztbdowenn.cs8idmhe7yye.us-east-2.rds.amazonaws.com',
