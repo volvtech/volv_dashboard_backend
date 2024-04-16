@@ -85,8 +85,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'volv',
         'USER': 'root',
-        'PASSWORD': 'Code@Rathod%123',
-        'HOST': '127.0.0.1',
+        'PASSWORD': 'alternation',
+        'HOST': 'aaeqzztbdowenn.cs8idmhe7yye.us-east-2.rds.amazonaws.com',
         'PORT': '3306',
     }
 }
