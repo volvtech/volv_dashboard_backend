@@ -163,7 +163,7 @@ VOLV_API_KEY = '1234567890'
 CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOWED_ORIGINS = [
-    '*'  # Add your frontend origin(s)
+    'http://localhost:5000'
 ]
 
 STATIC_URL = '/static/'
