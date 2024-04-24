@@ -149,7 +149,7 @@ class ArticlesFiltersView(APIView):
     authentication_classes = []  # Disable authentication
     permission_classes = []  # Disable permissions
 
-    def get(self, request):
+    def post(self, request):
         try:
             LOGGER.info(f"#volv_dashboard_backend #volv_dashboard #views #ArticlesFiltersView #GET starts...")
             article_publisher_filter_options = Publishers.objects.all().values_list('id', 'publisher_title')
