@@ -80,7 +80,7 @@ class ArticleView(APIView):
                           f" {str(err)}")
         return article_obj
 
-    def get(self, request, article_id):
+    def post(self, request, article_id):
         try:
             LOGGER.info("#volv_dashboard_backend #volv_dashboard #views #ArticleView GET Starts...")
             article = self.get_article_obj(article_id)
@@ -196,7 +196,7 @@ class PublisherView(APIView):
 
 
 class PasswordResetView(APIView):
-    def get(self, request):
+    def post(self, request):
         try:
             LOGGER.info(f"#views #PasswordResetView #POST starts...")
             print(f"#views #PasswordResetView #POST data: {request.data}")
@@ -227,7 +227,7 @@ class PasswordResetView(APIView):
 
 class HashtagsView(APIView):
     permission_classes = [StaffPermission | HasAPIKey]
-    def get(self, request):
+    def post(self, request):
         try:
             LOGGER.info("#volv_dashboard_backend #volv_dashboard #views #HashtagsView GET Starts...")
             article_hashtags = ArticleHashtags.objects.all().values_list('id', 'category_ids', 'sub_category')
