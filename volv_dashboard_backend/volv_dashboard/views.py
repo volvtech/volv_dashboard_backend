@@ -146,7 +146,8 @@ class UserLoginView(APIView):
 
 class ArticlesFiltersView(APIView):
     # permission_classes = [StaffPermission | HasAPIKey]
-    permission_classes = []
+    authentication_classes = []  # Disable authentication
+    permission_classes = []  # Disable permissions
 
     def get(self, request):
         try:
