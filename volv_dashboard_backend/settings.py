@@ -174,6 +174,11 @@ CORS_ALLOWED_HEADERS = (
     "x-csrftoken",
     "x-requested-with",
     "x-api-key",
+    "Access-Control-Allow-Headers",
+    "Access-Control-Allow-Methods",
+    "Access-Control-Allow-Origin",
+    "Content-Type",
+    "Referer",
 )
 
 STATIC_URL = '/static/'
