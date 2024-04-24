@@ -163,7 +163,7 @@ VOLV_API_KEY = '1234567890'
 CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:5000'
+    '*'
 ]
 
 CORS_ALLOWED_HEADERS = (
