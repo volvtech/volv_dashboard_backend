@@ -67,7 +67,8 @@ class ArticlesListView(APIView):
 
 
 class ArticleView(APIView):
-    permission_classes = [StaffPermission | HasAPIKey]
+    # permission_classes = [StaffPermission | HasAPIKey]
+    permission_classes = []
 
     def get_article_obj(self, article_id):
         LOGGER.info(f"#volv_dashboard_backend #volv_dashboard #views #ArticleView get_article_obj article_id:"
@@ -97,6 +98,19 @@ class ArticleView(APIView):
                           exc_info=True)
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+    def delete(self, request, article_id):
+        try:
+            LOGGER.info("#volv_dashboard_backend #volv_dashboard #views #ArticleView DELETE Starts...")
+            article = self.get_article_obj(article_id)
+            if article:
+                article.delete()
+                LOGGER.info(f"#volv_dashboard_backend #volv_dashboard #views #ArticleView DELETE article {article_id} is deleted")
+                return Response(status=status.HTTP_200_OK, data={'message': "Article Deleted Successfully"})
+            LOGGER.info(f"#volv_dashboard_backend #volv_dashboard #views #ArticleView DELETE article {article_id} DOES NOT EXISTS")
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={'message': "Article Does Not Exists"})
+        except Exception as err:
+            LOGGER.info(f"#volv_dashboard_backend #volv_dashboard #views #ArticleView DELETE article {article_id} ERROR: {str(err)}")
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR, data={'message': "Internal Server Error"})
 
 class ArticleCreateView(APIView):
     permission_classes = ()
