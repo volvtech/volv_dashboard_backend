@@ -94,10 +94,10 @@ DATABASES = {
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'volv_stage',
+#         'NAME': 'volv',
 #         'USER': 'root',
-#         'PASSWORD': 'alternation',
-#         'HOST': 'aaeqzztbdowenn.cs8idmhe7yye.us-east-2.rds.amazonaws.com',
+#         'PASSWORD': '***',
+#         'HOST': 'localhost',
 #         'PORT': '3306',
 #     }
 # }
@@ -203,3 +203,5 @@ EMAIL_HOST_PASSWORD = str(os.getenv('EMAIL_PASSWORD'))
 #     # We recommend adjusting this value in production.
 #     profiles_sample_rate=1.0,
 # )
+
+EMAIL_HOST_USER = "dipakrathod258@gmail.com"

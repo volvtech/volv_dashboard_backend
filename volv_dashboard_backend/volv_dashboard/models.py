@@ -835,7 +835,8 @@ class Users(models.Model):
     created_at = models.DateTimeField(blank=True, null=True)
     updated_at = models.DateTimeField(blank=True, null=True)
     role = models.CharField(max_length=45, blank=True, null=True)
-
+    last_login = models.DateTimeField(blank=True, null=True)
+    token = models.TextField()
     class Meta:
         managed = False
         db_table = 'users'

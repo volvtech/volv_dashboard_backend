@@ -19,7 +19,7 @@ from django.urls import path, include
 # from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token
 # from volv_dashboard_backend.volv_dashboard import views
 
-from volv_dashboard_backend.volv_dashboard.views import ArticlesListView, ArticleView, ArticleCreateView, UserLoginView, ArticlesFiltersView, PublisherView, HashtagsView
+from volv_dashboard_backend.volv_dashboard.views import ArticlesListView, ArticleView, ArticleCreateView, ForgotPasswordView, ResetPasswordView, UserLoginView, ArticlesFiltersView, PublisherView, HashtagsView
 
 from django.contrib.auth.views import (
     LogoutView, 
@@ -42,6 +42,8 @@ urlpatterns = [
     # path(r'^api-token-auth/', obtain_jwt_token),
     # path(r'^api-token-refresh/', refresh_jwt_token),
     path('user/login/', UserLoginView.as_view(), name='user-login'),
+    path('forgot-password/', ForgotPasswordView.as_view(), name='forgot_password'),
+    path('reset-password/', ResetPasswordView.as_view(), name='reset_password'),
     path('api-auth/', include('rest_framework.urls')),
     path('articles/<int:page_id>', ArticlesListView.as_view(), name='Get list of articles'),
     path('articles_filters/', ArticlesFiltersView.as_view(), name='Get list of filter options'),

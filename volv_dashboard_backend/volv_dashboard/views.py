@@ -23,6 +23,8 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import get_template
 from django.template import Context
 
+from volv_dashboard_backend.volv_dashboard.utils import generate_token, send_reset_email
+
 LOGGER = Logger.get_logger(__name__)
 
 
@@ -83,7 +85,7 @@ class ArticleView(APIView):
 
     def post(self, request, article_id):
         try:
-            LOGGER.info("#volv_dashboard_backend #volv_dashboard #views #ArticleView GET Starts...")
+            LOGGER.info("#volv_dashboard_backend #volv_dashboard #views #ArticleView POST Starts...")
             article = self.get_article_obj(article_id)
             if article:
                 article_serializer = ArticleDetailSerializer(article)
@@ -94,7 +96,28 @@ class ArticleView(APIView):
             else:
                 return Response(status=status.HTTP_400_BAD_REQUEST, data={'error': 'Article Does Not Exists'})
         except Exception as err:
-            LOGGER.error(f"#volv_dashboard_backend #volv_dashboard #views #ArticleView GET #ERROR: {str(err)}",
+            LOGGER.error(f"#volv_dashboard_backend #volv_dashboard #views #ArticleView POST #ERROR: {str(err)}",
+                          exc_info=True)
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def patch(self, request, article_id):
+        try:
+            LOGGER.info("#volv_dashboard_backend #volv_dashboard #views #ArticleView PATCH Starts...")
+            article = self.get_article_obj(article_id)
+            if article:
+                article_serializer = ArticleDetailSerializer(article, data=request.data, partial=True)
+                if article_serializer.is_valid():
+                    article_serializer.save()
+                    article_details = article_serializer.data
+                    LOGGER.info(f"#volv_dashboard_backend #volv_dashboard #views #ArticleView article_details: "
+                                f"{article_details}")
+                    return Response(status=status.HTTP_200_OK, data={'article': article_details})
+                LOGGER.error(f"#volv_dashboard_backend #volv_dashboard #views #ArticleView article_details article_id: {article_id} #ERROR: ArticleDetailSerializer is invalid")
+                return Response(status=status.HTTP_400_BAD_REQUEST, data={'error': "Rquest is invalid"})
+            else:
+                return Response(status=status.HTTP_400_BAD_REQUEST, data={'error': 'Article Does Not Exists'})
+        except Exception as err:
+            LOGGER.error(f"#volv_dashboard_backend #volv_dashboard #views #ArticleView PATCH #ERROR: {str(err)}",
                           exc_info=True)
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -252,3 +275,59 @@ class HashtagsView(APIView):
             LOGGER.error(f"#volv_dashboard_backend #volv_dashboard #views #HashtagsView GET #ERROR: {str(err)}",
                           exc_info=True)
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
+from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
+
+class ForgotPasswordView(APIView):
+    permission_classes = ()
+    def get_queryset(self):
+        return Users.objects.all()
+
+    def post(self, request):
+        try:
+            email = request.data.get('email')
+            user = Users.objects.get(email=email)
+            LOGGER.info(f"USER**: {user.id}")
+            if user:
+                # token = default_token_generator.make_token(user)
+                random_token = generate_token()
+                Users.objects.filter(id=user.id).update(token=random_token)
+                uid = urlsafe_base64_encode(force_bytes(user.pk))
+                reset_link = f"http://example.com/reset-password/?uid={uid}&token={random_token}"
+                send_reset_email(email, reset_link)
+                # Send email with reset link containing uid and token
+                # Example: http://example.com/reset-password/?uid=<uid>&token=<token>
+                # You can use Django's built-in EmailMessage to send emails
+                return Response({'message': 'Reset link sent to your email'}, status=status.HTTP_200_OK)
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as err:
+            LOGGER.error(f"#views.py #ForgotPasswordView #ERROR: {str(err)}", exc_info=True)
+            return Response({'error': "Internal Server Error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.encoding import force_str
+from django.utils.http import urlsafe_base64_decode
+
+class ResetPasswordView(APIView):
+    def post(self, request):
+        try:
+            uidb64 = request.data.get('uid')
+            token = request.data.get('token')
+            password = request.data.get('password')
+            
+            uid = force_str(urlsafe_base64_decode(uidb64))
+            user = Users.objects.get(pk=uid)
+            
+            # if user and default_token_generator.check_token(user, token):
+            if user and user.token == token:
+                user.set_password(password)
+                user.save()
+                return Response({'message': 'Password reset successfully'}, status=status.HTTP_200_OK)
+            return Response({'error': 'Invalid reset link'}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as err:
+            LOGGER.error(f"#views.py #ResetPasswordView #ERROR: {str(err)}", exc_info=True)
+            return Response({'error': "Internal Server Error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
