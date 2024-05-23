@@ -41,11 +41,11 @@ class ArticlesListView(APIView):
         search_term_condition = []
         if search_term:
             request_data.pop("search_term")
-            search_term_condition = [Q(article_author__contains=search_term) |
-                        Q(article_heading__contains=search_term) |
-                        Q(article_summary__contains=search_term) |
-                        Q(article_status__contains=search_term) |
-                        Q(article_category__contains=search_term)]
+            search_term_condition = [Q(article_author__icontains=search_term) |
+                        Q(article_heading__icontains=search_term) |
+                        Q(article_summary__icontains=search_term) |
+                        Q(article_status__icontains=search_term) |
+                        Q(article_category__icontains=search_term)]
 
         all_conditions = ([Q(**{filter_item:request_data[filter_item]}) for filter_item in request_data] +
                           search_term_condition)

@@ -52,7 +52,7 @@ urlpatterns = [
     path('publishers/', PublisherView.as_view(), name='List of Publishers'),
     path('password_reset/', PasswordResetView.as_view(), name='User Password Reset'),
     path('get_hashtags/', HashtagsView.as_view(), name='List of Hashtags'),
-    path('get_hashtags/', HashtagsView.as_view(), name='List of Hashtags'),
+    # path('get_hashtags/', HashtagsView.as_view(), name='List of Hashtags'),
 ]
  
 admin.site.site_header = "Volv Admin"
