@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from rest_framework_jwt.settings import api_settings
 from django.db.models import Q
 
-from volv_dashboard_backend.volv_dashboard.models import Articles, Publishers, Authors, Users, ArticleStatuses, ArticleCategories, ArticleHashtags
+from volv_dashboard_backend.volv_dashboard.models import Articles, Publishers, Authors, Users, ArticleStatuses, ArticleCategories, ArticleHashtags, CheckItOutOptions
 from volv_dashboard_backend.volv_dashboard.permissions import StaffPermission, HasAPIKey
 from volv_dashboard_backend.volv_dashboard.serializers import ArticlesListSerializer, ArticleDetailSerializer, \
     UserLoginSerializer
@@ -188,22 +188,34 @@ class ArticlesFiltersView(APIView):
 
     def post(self, request):
         try:
-            LOGGER.info(f"#volv_dashboard_backend #volv_dashboard #views #ArticlesFiltersView #GET starts...")
+            request_data = request.data
+            LOGGER.info(f"#volv_dashboard_backend #volv_dashboard #views #ArticlesFiltersView #GET starts... request_data: {request_data}")
             article_publisher_filter_options = Publishers.objects.all().values_list('id', 'publisher_title')
             article_author_filter_options = Users.objects.all().values_list('id', 'name')
             article_status_filter_options = ArticleStatuses.objects.all().values_list('id', 'status')
             article_category_filter_options = ArticleCategories.objects.all().values_list('id', 'category_title')
+            check_it_out_filter_options = CheckItOutOptions.objects.all().values_list('id', 'option')
 
             filter_options = {
                 "publisher_filters": article_publisher_filter_options,
                 "author_filters": article_author_filter_options,
                 "status_filters": article_status_filter_options,
                 "category_filters": article_category_filter_options,
+                "check_it_out_filter_options": check_it_out_filter_options,
             }
+
+            filter_response = {}
+            for filter in filter_options:
+                if filter in request_data.get("filters", None):
+                    filter_response[filter] = filter_options[filter]
+
+            LOGGER.info(f"#volv_dashboard_backend #volv_dashboard #views #ArticlesFiltersView filter_response: "
+                        f"{filter_response}")
+
             LOGGER.info(f"#volv_dashboard_backend #volv_dashboard #views #ArticlesFiltersView filter_options: "
                         f"{filter_options}")
 
-            return Response(status=200, data={'data': filter_options})
+            return Response(status=200, data={'data': filter_response})
         except Exception as err:
             LOGGER.error(f"#volv_dashboard_backend #volv_dashboard #views #ArticlesFiltersView #GET #ERROR: "
                          f"{str(err)}", exc_info=True)
@@ -233,6 +245,8 @@ class PublisherView(APIView):
 
 
 class PasswordResetView(APIView):
+    permission_classes = []
+
     def post(self, request):
         try:
             LOGGER.info(f"#views #PasswordResetView #POST starts...")
@@ -263,7 +277,9 @@ class PasswordResetView(APIView):
 
 
 class HashtagsView(APIView):
-    permission_classes = [StaffPermission | HasAPIKey]
+    permission_classes = []
+
+    # permission_classes = [StaffPermission | HasAPIKey]
     def post(self, request):
         try:
             LOGGER.info("#volv_dashboard_backend #volv_dashboard #views #HashtagsView GET Starts...")

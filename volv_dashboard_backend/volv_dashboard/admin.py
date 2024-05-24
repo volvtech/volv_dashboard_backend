@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from volv_dashboard_backend.volv_dashboard.models import Articles, Publishers, ArticleHashtags, ArticleCategories, ArticleStatuses
+from volv_dashboard_backend.volv_dashboard.models import Articles, Publishers, ArticleHashtags, ArticleCategories, ArticleStatuses, CheckItOutOptions
 
 
 # Register your models here.
@@ -15,3 +15,4 @@ admin.site.register(Publishers)
 admin.site.register(ArticleHashtags)
 admin.site.register(ArticleCategories)
 admin.site.register(ArticleStatuses)
+admin.site.register(CheckItOutOptions)

@@ -866,3 +866,14 @@ class WeekendArticles(models.Model):
     class Meta:
         managed = False
         db_table = 'weekend_articles'
+
+
+class CheckItOutOptions(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    option = models.CharField(max_length=255)
+    created_at = models.DateTimeField(blank=True, null=True)
+    updated_at = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'check_it_out_options'
