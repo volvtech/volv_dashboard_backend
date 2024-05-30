@@ -83,6 +83,20 @@ class ArticleView(APIView):
                           f" {str(err)}")
         return article_obj
 
+    def update_article_publish_time(self, article_id, article_publish_time):
+        try:
+            if article_id:
+                from datetime import datetime
+                date_now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                ArticlePublishTimes.objects.filter(article_id=article_id).update(
+                                                article_publish_time=article_publish_time,
+                                                updated_at=date_now
+                                                )
+                LOGGER.info(f"ArticleCreateView #save_article_publish_time Article Publish Time saved for article_id: {article_id}")
+
+        except Exception as err:
+            LOGGER.error(f"ArticleCreateView #save_article_publish_time #ERROR: {str(err)}")
+
     def post(self, request, article_id):
         try:
             LOGGER.info("#volv_dashboard_backend #volv_dashboard #views #ArticleView POST Starts...")
@@ -108,10 +122,16 @@ class ArticleView(APIView):
                 article_serializer = ArticleDetailSerializer(article, data=request.data, partial=True)
                 if article_serializer.is_valid():
                     article_serializer.save()
-                    article_details = article_serializer.data
-                    LOGGER.info(f"#volv_dashboard_backend #volv_dashboard #views #ArticleView article_details: "
-                                f"{article_details}")
-                    return Response(status=status.HTTP_200_OK, data={'article': article_details})
+
+                    if article_serializer.data:
+                        article_id = article_serializer.data.get('id', None)
+                        article_publish_time = request.data.get('article_publish_time', None)
+                        self.update_article_publish_time(article_id=article_id, article_publish_time=article_publish_time)
+
+                        article_details = article_serializer.data
+                        LOGGER.info(f"#volv_dashboard_backend #volv_dashboard #views #ArticleView article_details: "
+                                    f"{article_details}")
+                        return Response(status=status.HTTP_200_OK, data={'article': article_details})
                 LOGGER.error(f"#volv_dashboard_backend #volv_dashboard #views #ArticleView article_details article_id: {article_id} #ERROR: ArticleDetailSerializer is invalid")
                 return Response(status=status.HTTP_400_BAD_REQUEST, data={'error': "Rquest is invalid"})
             else:
