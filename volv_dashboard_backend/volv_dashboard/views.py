@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from rest_framework_jwt.settings import api_settings
 from django.db.models import Q
 
-from volv_dashboard_backend.volv_dashboard.models import Articles, Publishers, Authors, Users, ArticleStatuses, ArticleCategories, ArticleHashtags, CheckItOutOptions
+from volv_dashboard_backend.volv_dashboard.models import Articles, Publishers, Authors, Users, ArticleStatuses, ArticleCategories, ArticleHashtags, CheckItOutOptions, ArticlePublishTimes
 from volv_dashboard_backend.volv_dashboard.permissions import StaffPermission, HasAPIKey
 from volv_dashboard_backend.volv_dashboard.serializers import ArticlesListSerializer, ArticleDetailSerializer, \
     UserLoginSerializer
@@ -138,6 +138,21 @@ class ArticleView(APIView):
 class ArticleCreateView(APIView):
     permission_classes = ()
 
+    def save_article_publish_time(self, article_id):
+        try:
+            if article_id:
+                from datetime import datetime
+                article_publish_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                ArticlePublishTimes.objects.create(article_id=article_id,
+                                                article_publish_time=article_publish_time,
+                                                created_at=article_publish_time,
+                                                updated_at=article_publish_time
+                                                )
+                LOGGER.info(f"ArticleCreateView #save_article_publish_time Article Publish Time saved for article_id: {article_id}")
+
+        except Exception as err:
+            LOGGER.error(f"ArticleCreateView #save_article_publish_time #ERROR: {str(err)}")
+
     def post(self, request):
         try:
             print(f"STARTTTTT....")
@@ -147,7 +162,10 @@ class ArticleCreateView(APIView):
             article_serializer = ArticleDetailSerializer(data=request.data)
             if article_serializer.is_valid():
                 article_serializer.save()
-                return Response(article_serializer.data, status.HTTP_201_CREATED)
+                if article_serializer.data:
+                    article_id = article_serializer.data.get('id', None)
+                    self.save_article_publish_time(article_id=article_id)
+                    return Response(article_serializer.data, status.HTTP_201_CREATED)
             else:
                 return Response({'error': article_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as err:
