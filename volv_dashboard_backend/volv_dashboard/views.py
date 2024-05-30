@@ -138,15 +138,15 @@ class ArticleView(APIView):
 class ArticleCreateView(APIView):
     permission_classes = ()
 
-    def save_article_publish_time(self, article_id):
+    def save_article_publish_time(self, article_id, article_publish_time):
         try:
             if article_id:
                 from datetime import datetime
-                article_publish_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                date_now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 ArticlePublishTimes.objects.create(article_id=article_id,
                                                 article_publish_time=article_publish_time,
-                                                created_at=article_publish_time,
-                                                updated_at=article_publish_time
+                                                created_at=date_now,
+                                                updated_at=date_now
                                                 )
                 LOGGER.info(f"ArticleCreateView #save_article_publish_time Article Publish Time saved for article_id: {article_id}")
 
@@ -164,7 +164,8 @@ class ArticleCreateView(APIView):
                 article_serializer.save()
                 if article_serializer.data:
                     article_id = article_serializer.data.get('id', None)
-                    self.save_article_publish_time(article_id=article_id)
+                    article_publish_time = request.data.get('article_publish_time', None)
+                    self.save_article_publish_time(article_id=article_id, article_publish_time=article_publish_time)
                     return Response(article_serializer.data, status.HTTP_201_CREATED)
             else:
                 return Response({'error': article_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
