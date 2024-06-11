@@ -36,7 +36,8 @@ class UserLoginSerializer(serializers.Serializer):
         return user
 
     def get_user_data(self, request):
-        user = Users.objects.get(id=3)
+        user_email = request.get('email')
+        user = Users.objects.get(email=user_email)
         user_data_obj = {}
         user_data_obj['name'] = user.name
         user_data_obj['email'] = user.email
