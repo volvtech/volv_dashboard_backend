@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from rest_framework_jwt.settings import api_settings
 from django.db.models import Q
 
-from volv_dashboard_backend.volv_dashboard.models import Articles, Publishers, Authors, Users, ArticleStatuses, ArticleCategories, ArticleHashtags, CheckItOutOptions, ArticlePublishTimes
+from volv_dashboard_backend.volv_dashboard.models import Articles, Publishers, Authors, Users, ArticleStatuses, ArticleCategories, ArticleHashtags, CheckItOutOptions, ArticlePublishTimes, Articletimestamp
 from volv_dashboard_backend.volv_dashboard.permissions import StaffPermission, HasAPIKey
 from volv_dashboard_backend.volv_dashboard.serializers import ArticlesListSerializer, ArticleDetailSerializer, \
     UserLoginSerializer
@@ -104,6 +104,8 @@ class ArticleView(APIView):
             if article:
                 article_serializer = ArticleDetailSerializer(article)
                 article_details = article_serializer.data
+                article_timestamp = Articletimestamp.objects.filter(article_id = article_id)
+                article_details['article_publish_time'] = article_timestamp.article_publish_time
                 LOGGER.info(f"#volv_dashboard_backend #volv_dashboard #views #ArticleView article_details: "
                              f"{article_details}")
                 return Response(status=status.HTTP_200_OK, data={'article': article_details})
