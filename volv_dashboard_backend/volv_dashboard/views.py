@@ -175,6 +175,25 @@ class ArticleCreateView(APIView):
         except Exception as err:
             LOGGER.error(f"ArticleCreateView #save_article_publish_time #ERROR: {str(err)}")
 
+    def save_convterted_video_url(self, article_id, converted_video_url):
+        try:
+            if article_id:
+                Articles.objects.filter(article_id=article_id).update(article_video_url = converted_video_url)
+                LOGGER.info(f"ArticleCreateView #save_convterted_video_url Article article_id: {article_id}")
+        except Exception as err:
+            LOGGER.error(f"ArticleCreateView #save_convterted_video_url #ERROR: {str(err)}")
+
+    def convert_video_url(self, url):
+        import requests
+        url = 'https://server.volvmedia.com/videoUrl'
+        params = {
+            'url': url
+        }
+        response = requests.get(url, params=params)
+        print(response.text)
+        return response['value']
+
+
     def post(self, request):
         try:
             print(f"STARTTTTT....")
@@ -187,7 +206,10 @@ class ArticleCreateView(APIView):
                 if article_serializer.data:
                     article_id = article_serializer.data.get('id', None)
                     article_publish_time = request.data.get('article_publish_time', None)
+                    article_video_url = request.data.get('article_video_url', None)
+                    converted_video_url = self.convert_video_url(article_video_url)
                     self.save_article_publish_time(article_id=article_id, article_publish_time=article_publish_time)
+                    self.save_convterted_video_url(article_id=article_id,converted_video_url=converted_video_url)
                     return Response(article_serializer.data, status.HTTP_201_CREATED)
             else:
                 return Response({'error': article_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
