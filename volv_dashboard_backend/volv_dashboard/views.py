@@ -104,8 +104,8 @@ class ArticleView(APIView):
             if article:
                 article_serializer = ArticleDetailSerializer(article)
                 article_details = article_serializer.data
-                article_timestamp = Articletimestamp.objects.filter(article_id = article_id)
-                article_details['article_publish_time'] = article_timestamp.article_publish_time
+                article_timestamp = ArticlePublishTimes.objects.filter(article_id = article_id)
+                article_details['article_publish_time'] = article_timestamp[0].created_at
                 LOGGER.info(f"#volv_dashboard_backend #volv_dashboard #views #ArticleView article_details: "
                              f"{article_details}")
                 return Response(status=status.HTTP_200_OK, data={'article': article_details})
@@ -128,8 +128,10 @@ class ArticleView(APIView):
                     if article_serializer.data:
                         article_id = article_serializer.data.get('id', None)
                         article_publish_time = request.data.get('article_publish_time', None)
+                        article_video_url = request.data.get('article_video_url', None)
+                        converted_video_url = self.convert_video_url(article_video_url)
                         self.update_article_publish_time(article_id=article_id, article_publish_time=article_publish_time)
-
+                        self.save_convterted_video_url(article_id=article_id,converted_video_url=converted_video_url)
                         article_details = article_serializer.data
                         LOGGER.info(f"#volv_dashboard_backend #volv_dashboard #views #ArticleView article_details: "
                                     f"{article_details}")
@@ -142,6 +144,28 @@ class ArticleView(APIView):
             LOGGER.error(f"#volv_dashboard_backend #volv_dashboard #views #ArticleView PATCH #ERROR: {str(err)}",
                           exc_info=True)
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    def save_convterted_video_url(self, article_id, converted_video_url):
+        try:
+            if article_id and converted_video_url:
+                Articles.objects.filter(id=article_id).update(article_video_url = converted_video_url, article_video_validity_checked = 1)
+                LOGGER.info(f"ArticleCreateView #save_convterted_video_url Article article_id: {article_id}")
+        except Exception as err:
+            LOGGER.error(f"ArticleCreateView #save_convterted_video_url #ERROR: {str(err)}")
+
+    def convert_video_url(self, videoUrl):
+        try:
+            import requests
+            url = 'https://server.volvmedia.com/videoUrl'
+            params = {
+                'url': videoUrl
+            }
+            response = requests.get(url, params=params)
+            print(response.text)
+            return response.json()['value']
+        except Exception as error:
+            LOGGER.error(f"ArticleCreateView #convert_video_url #ERROR: {str(error)}")
+            return ''
 
     def delete(self, request, article_id):
         try:
@@ -177,21 +201,25 @@ class ArticleCreateView(APIView):
 
     def save_convterted_video_url(self, article_id, converted_video_url):
         try:
-            if article_id:
-                Articles.objects.filter(article_id=article_id).update(article_video_url = converted_video_url)
+            if article_id and converted_video_url:
+                Articles.objects.filter(id=article_id).update(article_video_url = converted_video_url, article_video_validity_checked = 1)
                 LOGGER.info(f"ArticleCreateView #save_convterted_video_url Article article_id: {article_id}")
         except Exception as err:
             LOGGER.error(f"ArticleCreateView #save_convterted_video_url #ERROR: {str(err)}")
 
-    def convert_video_url(self, url):
-        import requests
-        url = 'https://server.volvmedia.com/videoUrl'
-        params = {
-            'url': url
-        }
-        response = requests.get(url, params=params)
-        print(response.text)
-        return response['value']
+    def convert_video_url(self, videoUrl):
+        try:
+            import requests
+            url = 'https://server.volvmedia.com/videoUrl'
+            params = {
+                'url': videoUrl
+            }
+            response = requests.get(url, params=params)
+            print(response.text)
+            return response.json()['value']
+        except Exception as error:
+            LOGGER.error(f"ArticleCreateView #convert_video_url #ERROR: {str(error)}")
+            return ''
 
 
     def post(self, request):

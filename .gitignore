@@ -1,0 +1,6 @@
+.venv
+assest
+static
+*.pyc
+*.log
+*.DS_Store
